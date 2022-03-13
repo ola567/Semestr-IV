@@ -1,0 +1,47 @@
+przetawrznie rozproszone:
+pliki nagłókowe nie zajują nic w pamięci
+sekcja krytyczna -> coś co nam zaburza funkcjonowanie programu
+
+gcc -Wall -lpthread race.c -o race //kompilacja uwzględniająca ...
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+#define COUNT 10000
+
+int counter=0;
+void *thread_f(void *vp)
+{
+	int i=COUNT;
+	while(i--)
+	{
+		sem_wait(&sem);	//semafor do przepuszczanai danych?
+		counter++;
+		sem_post(&sem);
+	}
+	return NULL
+}
+
+int main(int argc, char* argv[])
+{
+	pthread_t t1,t2,t3;
+
+	if(sem_init(&sem, 0, 1)!=0)
+		perror("sem init failed \n");
+		return 1;
+	pthread_create(&t1, NULL, thread_f, NULL);
+	pthread_create(&t2, NULL, thread_f, NULL);
+	pthread_create(&t3, NULL, thread_f, NULL);
+
+	pthread_join(t1, NULL);
+	pthread_join(t2, NULL);
+	pthread_join(t3, NULL);
+
+	printf("counter = ", counter);
+	return 0;
+}
+
+//wystąpiło tutaj zjawisko wyścigu, czyli jeśli wątki odnoszą się do tych samych danych w tym samym czasie
+//dlatego to jakos osbie zomptymalizowliśmy
